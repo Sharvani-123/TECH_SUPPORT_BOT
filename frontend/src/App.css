@@ -61,7 +61,7 @@ p {
 }
 
 /* Chat icon with 3D hover effect */
-.chat-icon {
+/* .chat-icon {
   position: fixed;
   bottom: 20px;
   left: 20px;
@@ -82,7 +82,7 @@ p {
 .chat-icon:hover {
   transform: translateY(-5px);
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
-}
+} */
 
 /* Background Shapes Styling */
 .shape {
