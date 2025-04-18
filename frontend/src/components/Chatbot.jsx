@@ -1,73 +1,118 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Chatbot.css';
 
 function Chatbot() {
-  const [messages, setMessages] = useState([
-    { text: "Hello! How may I assist you today?", sender: "bot" },
-    { text: "Tell me your device type: Mobile or Laptop?", sender: "bot" },
-  ]);
-  const [query, setQuery] = useState("");
-  const [deviceType, setDeviceType] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState([]);
+  const [inputMessage, setInputMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Simulate API for device-based responses
-  const handleSendQuery = () => {
-    if (query.trim() === "") return;
-
-    const userMessage = { text: query, sender: "user" };
-    setMessages([...messages, userMessage]);
-
-    if (!deviceType) {
-      // Detect device type from initial user query
-      if (query.toLowerCase() === "mobile" || query.toLowerCase() === "laptop") {
-        setDeviceType(query.toLowerCase());
-        setMessages([...messages, userMessage, { text: `You're using a ${query}. Ask me your query!`, sender: "bot" }]);
-      } else {
-        setMessages([...messages, userMessage, { text: "Please choose either 'Mobile' or 'Laptop' to proceed.", sender: "bot" }]);
-      }
-      setQuery("");
-      return;
+  // Initial bot message when chat opens
+  useEffect(() => {
+    if (isOpen && messages.length === 0) {
+      setMessages([{ text: "Hello! I'm your tech support assistant. How may I help you today?", sender: "bot" }]);
     }
+  }, [isOpen]);
 
-    // Hardcoded responses (Replace with Flask API later)
-    const response = getResponse(query, deviceType);
-    setMessages([...messages, userMessage, { text: response, sender: "bot" }]);
-    setQuery("");
+  const handleSendMessage = async () => {
+    if (!inputMessage.trim()) return;
+
+    // Add user message to chat
+    const userMessage = { text: inputMessage, sender: "user" };
+    setMessages(prev => [...prev, userMessage]);
+    setInputMessage('');
+    setIsLoading(true);
+
+    try {
+      // Call your Vercel serverless function
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userMessage: inputMessage }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      
+      // Add bot response to chat
+      setMessages(prev => [...prev, { text: data.reply, sender: "bot" }]);
+    } catch (error) {
+      console.error('Error:', error);
+      setMessages(prev => [...prev, { 
+        text: "Sorry, I'm having trouble connecting to the support system. Please try again later.", 
+        sender: "bot" 
+      }]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  // Dummy FAQ Responses for Mobile and Laptop
-  const getResponse = (query, device) => {
-    const mobileFAQ = {
-      "battery issue": "Disable Background App Refresh to optimize battery.",
-      "app not installing": "Check internet connection or clear Play Store cache.",
-    };
-
-    const laptopFAQ = {
-      "slow performance": "Disable startup programs and clear temporary files.",
-      "update driver": "Use Device Manager to update drivers.",
-    };
-
-    const faqData = device === "mobile" ? mobileFAQ : laptopFAQ;
-    return faqData[query.toLowerCase()] || "Sorry, I couldn't find a solution. Do you want to escalate?";
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSendMessage();
+    }
   };
 
   return (
-    <div className="chat-container">
-      <div className="chat-window">
-        {messages.map((msg, index) => (
-          <div key={index} className={`message ${msg.sender}`}>
-            {msg.text}
+    <div className="chatbot-container">
+      {/* Chatbot button */}
+      <button 
+        className="chatbot-button" 
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z" fill="currentColor"/>
+        </svg>
+      </button>
+
+      {/* Chat window */}
+      {isOpen && (
+        <div className="chat-window">
+          <div className="chat-header">
+            <h3>Tech Support</h3>
+            <button onClick={() => setIsOpen(false)}>×</button>
           </div>
-        ))}
-      </div>
-      <div className="chat-input">
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Type your query..."
-        />
-        <button onClick={handleSendQuery}>Send</button>
-      </div>
+          
+          <div className="messages-container">
+            {messages.map((message, index) => (
+              <div key={index} className={`message ${message.sender}`}>
+                {message.text}
+              </div>
+            ))}
+            {isLoading && (
+              <div className="message bot">
+                <div className="typing-indicator">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="input-area">
+            <input
+              type="text"
+              value={inputMessage}
+              onChange={(e) => setInputMessage(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Type your question..."
+              disabled={isLoading}
+            />
+            <button 
+              onClick={handleSendMessage}
+              disabled={isLoading || !inputMessage.trim()}
+            >
+              Send
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

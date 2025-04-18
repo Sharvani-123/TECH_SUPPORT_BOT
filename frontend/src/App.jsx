@@ -20,12 +20,8 @@ function App() {
         <p>Your one-stop solution for quick tech support!</p>
       </div>
 
-      {/* Only render Chatbot if showChat is true */}
-      {showChat && <Chatbot />}
-      
-      <div className="chat-icon" onClick={() => setShowChat(!showChat)}>
-        💬
-      </div>
+      {/*Always render*/}
+      {<Chatbot />}
     </div>
   );
 }
