@@ -18,6 +18,9 @@ function App() {
       <div className="content">
         <h1>Welcome to TechEase</h1>
         <p>Your one-stop solution for quick tech support!</p>
+        <p>Made by-</p>
+        <p>Vanshika Gupta- 37</p>
+        <p>Sharvani- 59</p>
       </div>
 
       {/*Always render*/}
