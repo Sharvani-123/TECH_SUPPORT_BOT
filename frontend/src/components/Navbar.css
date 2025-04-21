@@ -1,0 +1,45 @@
+.navbar {
+    width: 100%;
+    padding: 16px 32px;
+    display: flex;
+    box-sizing: border-box;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    background-color: rgba(0, 0, 0, 0.2); /* MORE transparent */
+    backdrop-filter: blur(10px);
+    color: #ffffff;
+    font-size: 1.3em;
+    font-weight: 600;
+    position: relative;
+    top: 0;
+    z-index: 999;
+  }
+  
+  .navbar-left {
+    font-size: 1.5em;
+    letter-spacing: 1px;
+
+  }
+  
+  .navbar-right {
+    display: flex;
+    gap: 27px; /* controls spacing between items */
+    flex-wrap: wrap;
+  }
+  .navbar-right span{
+   /* margin-right: 42px; */
+  font-size: 0.9em;
+  color: #c0c0c0;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+  /* margin-top: 0;
+  opacity: 0.9; */
+  cursor: default;
+  white-space: nowrap;
+  }
+  
+  .navbar-right span:hover {
+    opacity: 1;
+    cursor: default; /* Looks nice, no pointer */
+  }
+  

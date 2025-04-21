@@ -2,13 +2,18 @@
 body {
   margin: 0;
   padding: 0;
+  height:100%;
   font-family: 'Roboto', sans-serif;
-  overflow: hidden;
   background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
   background-size: 400% 400%;
   animation: gradientShift 15s ease infinite;
 }
 
+/* #root{
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+} */
 /* Keyframes for the animated gradient */
 @keyframes gradientShift {
   0% { background-position: 0% 50%; }
@@ -20,6 +25,7 @@ body {
 .app-container {
   position: relative;
   min-height: 100vh;
+  /* flex:1; */
   padding: 20px;
   box-sizing: border-box;
   display: flex;

@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
 import './App.css';
 import Chatbot from './components/Chatbot.jsx';
+import Navbar from './components/Navbar.jsx';
+import Footer from './components/Footer.jsx';
 
 function App() {
   const [showChat, setShowChat] = useState(false);
 
   return (
+    <>
+      <Navbar/>
     <div className="app-container">
+      
       {/* Background Shapes */}
       <div className="background-shapes">
         <div className="shape" style={{ top: '10%', left: '20%' }}></div>
@@ -23,6 +28,8 @@ function App() {
       {/*Always render*/}
       {<Chatbot />}
     </div>
+    <Footer/>
+    </>
   );
 }
 
